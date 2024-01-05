@@ -7,7 +7,7 @@ import { apiUrl } from "../api/url";
 import { Status } from "../enums/status.enum";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class ServerService {
   constructor(private http: HttpClient) {}
