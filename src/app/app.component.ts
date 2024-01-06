@@ -9,6 +9,8 @@ import { CustomResponse } from "./interface/custom-response";
 import { DataState } from "./enums/data-state.enum";
 import { ServersListComponent } from "./servers-list/servers-list.component";
 import { ServerItemComponent } from "./server-item/server-item.component";
+import { Status } from "./enums/status.enum";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-root",
@@ -21,7 +23,8 @@ import { ServerItemComponent } from "./server-item/server-item.component";
     RouterOutlet,
     HttpClientModule,
     ServersListComponent,
-    ServerItemComponent
+    ServerItemComponent,
+    ReactiveFormsModule
   ]
 })
 export class AppComponent implements OnInit {
@@ -29,6 +32,9 @@ export class AppComponent implements OnInit {
   appState$: Observable<AppState<CustomResponse>>;
   private dataSubject = new BehaviorSubject<CustomResponse>(null);
   readonly DataState = DataState;
+  readonly Status = Status;
+
+  selectedStatus = new FormControl(Status.ALL);
 
   constructor(private serverService: ServerService) {}
 
@@ -53,6 +59,18 @@ export class AppComponent implements OnInit {
         );
         this.dataSubject.value.data.servers[index] = response.data.server;
         return { dataState: DataState.LOADED_STATE, appData: this.dataSubject.value };
+      }),
+      startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
+      catchError((error: string) => {
+        return of({ dataState: DataState.ERROR_STATE, error });
+      })
+    );
+  }
+
+  filterServers(status: Status): void {
+    this.appState$ = this.serverService.filter$(status, this.dataSubject.value).pipe(
+      map((response) => {
+        return { dataState: DataState.LOADED_STATE, appData: response };
       }),
       startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
       catchError((error: string) => {

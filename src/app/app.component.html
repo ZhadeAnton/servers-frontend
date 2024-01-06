@@ -17,6 +17,12 @@
 </style>
 
 <main class="main">
+  <select [formControl]="selectedStatus" (change)="filterServers(selectedStatus.value)">
+    <option value="ALL">ALL</option>
+    <option value="SERVER_UP">SERVER_UP</option>
+    <option value="SERVER_DOWN">SERVER_DOWN</option>
+  </select>
+
   <div
     class="wrapper"
     *ngIf="appState$ | async as appState"
