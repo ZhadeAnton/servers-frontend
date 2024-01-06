@@ -1,0 +1,7 @@
+<ul class="servers-list">
+  <app-server-item
+    *ngFor="let server of serversList"
+    [serverItem]="server"
+    (pingServerEvent)="pingServer($event)"
+  />
+</ul>

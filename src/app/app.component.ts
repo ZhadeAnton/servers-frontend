@@ -3,31 +3,58 @@ import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
 import { ServerService } from "./service/server.service";
-import { Observable, catchError, map, of, startWith } from "rxjs";
+import { BehaviorSubject, Observable, catchError, map, of, startWith } from "rxjs";
 import { AppState } from "./interface/app-state";
 import { CustomResponse } from "./interface/custom-response";
 import { DataState } from "./enums/data-state.enum";
+import { ServersListComponent } from "./servers-list/servers-list.component";
+import { ServerItemComponent } from "./server-item/server-item.component";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HttpClientModule],
   providers: [ServerService],
   templateUrl: "./app.component.html",
-  styleUrl: "./app.component.scss"
+  styleUrl: "./app.component.scss",
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    HttpClientModule,
+    ServersListComponent,
+    ServerItemComponent
+  ]
 })
 export class AppComponent implements OnInit {
   title = "servers-front";
   appState$: Observable<AppState<CustomResponse>>;
+  private dataSubject = new BehaviorSubject<CustomResponse>(null);
+  readonly DataState = DataState;
 
   constructor(private serverService: ServerService) {}
 
   ngOnInit(): void {
     this.appState$ = this.serverService.servers$.pipe(
       map((response) => {
+        this.dataSubject.next(response);
         return { dataState: DataState.LOADED_STATE, appData: response };
       }),
       startWith({ dataState: DataState.LOADING_STATE, appData: null }),
+      catchError((error: string) => {
+        return of({ dataState: DataState.ERROR_STATE, error });
+      })
+    );
+  }
+
+  pingServer(ipAddress: string): void {
+    this.appState$ = this.serverService.ping$(ipAddress).pipe(
+      map((response) => {
+        const index = this.dataSubject.value.data.servers.findIndex(
+          (server) => server.id === response.data.server.id
+        );
+        this.dataSubject.value.data.servers[index] = response.data.server;
+        return { dataState: DataState.LOADED_STATE, appData: this.dataSubject.value };
+      }),
+      startWith({ dataState: DataState.LOADED_STATE, appData: this.dataSubject.value }),
       catchError((error: string) => {
         return of({ dataState: DataState.ERROR_STATE, error });
       })

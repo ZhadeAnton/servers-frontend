@@ -4,7 +4,6 @@ import { Observable, catchError, tap, throwError } from "rxjs";
 import { CustomResponse } from "../interface/custom-response";
 import { Server } from "../interface/server";
 import { apiUrl } from "../api/url";
-import { Status } from "../enums/status.enum";
 
 @Injectable({
   providedIn: "root",

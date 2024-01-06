@@ -1,3 +1,5 @@
+import { Status } from "../enums/status.enum";
+
 export interface Server {
   id: number;
   ipAddress: string;
@@ -5,5 +7,5 @@ export interface Server {
   memory: string;
   type: string;
   imageUrl: string;
-  status: string;
+  status: Status;
 }

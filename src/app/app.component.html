@@ -9,11 +9,33 @@
     box-sizing: inherit;
     position: relative;
   }
+
+  .wrapper {
+    width: 100%;
+    height: 100%;
+  }
 </style>
 
 <main class="main">
-  <div>
-    {{ appState$ | async | json }}
+  <div
+    class="wrapper"
+    *ngIf="appState$ | async as appState"
+    [ngSwitch]="appState.dataState"
+  >
+    <div *ngSwitchCase="DataState.LOADING_STATE">
+      <p>Loading...</p>
+    </div>
+
+    <div *ngSwitchCase="DataState.LOADED_STATE">
+      <app-servers-list
+        [serversList]="appState.appData.data.servers"
+        (pingServerEvent)="pingServer($event)"
+      />
+    </div>
+
+    <div *ngSwitchCase="DataState.ERROR_STATE">
+      <p>Error</p>
+    </div>
   </div>
 </main>
 

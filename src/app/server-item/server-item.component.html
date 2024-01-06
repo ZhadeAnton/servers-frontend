@@ -1,0 +1,35 @@
+<div class="server-item">
+  <div class="server-item__image">
+    <img
+      class="server-item__icon"
+      [ngSrc]="serverItem.imageUrl"
+      width="80"
+      height="80"
+      priority
+      alt="server-icon"
+    />
+  </div>
+
+  <div class="server-item__name">
+    <p>{{ serverItem.name }}</p>
+  </div>
+
+  <div class="server-item__ip">
+    <p>{{ serverItem.ipAddress }}</p>
+  </div>
+
+  <div class="server-item__memory">
+    <p>{{ serverItem.memory }}</p>
+  </div>
+
+  <div
+    class="server-item__memory"
+    [ngClass]="serverItem.status == Status.SERVER_UP ? 'badge-success' : 'badge-error'"
+  >
+    <p>{{ serverItem.status }}</p>
+  </div>
+
+  <div>
+    <button (click)="pingServer(serverItem.ipAddress)">Ping</button>
+  </div>
+</div>

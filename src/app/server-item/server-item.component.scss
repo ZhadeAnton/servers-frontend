@@ -1,0 +1,34 @@
+.server-item {
+    width: 100%;
+    height: 90px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    direction: row;
+    flex-wrap: nowrap;
+    column-gap: 14px;
+
+    &__icon {
+        width: 80px;
+        height: 80px;
+        background-size: cover;
+    }
+
+    &__name {
+        color: cornflowerblue;
+    }
+
+    &__ip {
+        color: chartreuse;
+    }
+
+    &__memory {}
+
+    .badge-success {
+        color: greenyellow;
+    }
+
+    .badge-error {
+        color: red;
+    }
+}
